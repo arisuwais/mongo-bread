@@ -1,8 +1,9 @@
-let express = require('express');
-let router = express.Router();
-let mongoose = require('mongoose');
-let model = require('../models/model');
-let Demo = model.Demo;
+const express = require('express');
+const router = express.Router();
+const mongoose = require('mongoose');
+const model = require('../models/model');
+const Demo = model.Demo;
+const moment = require('moment');
 
 mongoose.connect('mongodb://localhost/express_demo');
 
@@ -27,15 +28,28 @@ router.get('/', function (req, res, next) {
   }
 
   if (req.query.checkdate && req.query.formdate && req.query.formenddate) {
-    params["date"] = req.query.formdate
+    //params["date"] = req.query.formdate
+    // params2["date"] = req.query.formenddate
+    //params["date"] ={ $range = [req.query.formdate, req.query.formenddate]}
+
+
+
+    params["date"] = {
+      "$gte": new Date(req.query.formdate),
+      "$lt": new Date(req.query.formenddate)
+    }
   }
+
 
   if (req.query.checkboolean && req.query.boolean) {
     params["boolean"] = req.query.boolean
   }
 
+  console.log(params);
+
   Demo.find(params, (err, count) => {
-    //console.log(count);
+
+    console.log(count);
 
     const page = req.query.page || 1;
     const limit = 5;
@@ -43,19 +57,21 @@ router.get('/', function (req, res, next) {
     const url = req.url == '/' ? '/?page=1' : req.url
     const total = count.length;
     const pages = Math.ceil(total / limit);
+    //console.log(params);
 
-    console.log(params);
+
     Demo.find(params, null, {
-
       limit: limit,
       skip: offset
     }).then(function (data) {
+      // console.log(data);
       res.render('index', {
         data,
         page,
         pages,
         query: req.query,
-        url
+        url,
+        moment
       });
     });
   });
@@ -83,7 +99,7 @@ router.post('/add', function (req, res, next) {
     string: req.body.string,
     integer: req.body.integer,
     float: req.body.float,
-    date: req.body.date,
+    date: new Date(req.body.date),
     boolean: req.body.boolean
   });
   console.log('create success');

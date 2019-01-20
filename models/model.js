@@ -16,7 +16,7 @@ var demoSchema = new Schema({
         type: Number
     },
     date: {
-        type: String
+        type: Date
     },
     boolean: {
         type: Boolean
