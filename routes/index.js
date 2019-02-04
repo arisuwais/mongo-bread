@@ -28,28 +28,21 @@ router.get('/', function (req, res, next) {
   }
 
   if (req.query.checkdate && req.query.formdate && req.query.formenddate) {
-    //params["date"] = req.query.formdate
-    // params2["date"] = req.query.formenddate
-    //params["date"] ={ $range = [req.query.formdate, req.query.formenddate]}
-
-
-
     params["date"] = {
       "$gte": new Date(req.query.formdate),
       "$lt": new Date(req.query.formenddate)
     }
   }
 
-
   if (req.query.checkboolean && req.query.boolean) {
     params["boolean"] = req.query.boolean
   }
 
-  console.log(params);
+  //console.log(params);
 
   Demo.find(params, (err, count) => {
 
-    console.log(count);
+    //console.log(count);
 
     const page = req.query.page || 1;
     const limit = 5;
@@ -58,7 +51,6 @@ router.get('/', function (req, res, next) {
     const total = count.length;
     const pages = Math.ceil(total / limit);
     //console.log(params);
-
 
     Demo.find(params, null, {
       limit: limit,
@@ -104,7 +96,7 @@ router.post('/add', function (req, res, next) {
   });
   console.log('create success');
   item.save(function (err, rows) {
-    console.log(rows);
+    //console.log(rows);
     res.redirect('/');
   });
 });
@@ -122,9 +114,9 @@ router.get('/edit', function (req, res, next) {
   Demo.find({
     _id: id
   }, function (err, rows) {
-    console.log("show edit");
+    //console.log("show edit");
+    console.log(id);
     res.render('edit', {
-      title: 'Express',
       item: rows[0]
     });
   });
